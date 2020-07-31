@@ -1,0 +1,12 @@
+#!/bin/sh
+
+TMPFILE=`mktemp`
+
+/root/bin/chkrootkit | grep INFECTED | egrep -v "/sbin/init|bindshell" > $TMPFILE
+
+if [ -s $TMPFILE ]; then
+    cat $TMPFILE | mail -s "chkrootkit `hostname` `date +%Y-%m-%d`" root > /dev/null
+fi
+
+rm -f $TMPFILE
+

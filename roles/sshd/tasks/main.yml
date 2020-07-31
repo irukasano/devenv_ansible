@@ -1,0 +1,21 @@
+---
+
+- name: Disabled SELinux
+  selinux: 
+#    policy: targeted
+    state: disabled
+
+- name: Edit sshd_config
+  replace:
+    dest: /etc/ssh/sshd_config
+    regexp: '{{ item.regexp }}'
+    replace: '{{ item.replace }}'
+    backup: yes
+  with_items:
+    - regexp: '^#Port 22'
+      replace: 'Port 2222'
+    - regexp: '^#Protocol 2'
+      replace: 'Protocol 2'
+  notify:
+    - Restart sshd
+

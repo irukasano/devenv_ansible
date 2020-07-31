@@ -1,0 +1,73 @@
+---
+- name: Install httpd and php
+  yum:
+    state: present
+    name:
+      - "httpd"
+    exclude: kernel*
+  notify:
+    - Restart httpd
+
+- name: Start httpd
+  service: 
+    state: started
+    name: httpd.service
+
+- name: Enable httpd
+  service: 
+    enabled: yes
+    name: httpd.service
+
+- name: Status autoindex.conf
+  stat:
+    path: "{{ httpd_conf_d_dir }}/autoindex.conf"
+  register: f
+  notify: Restart httpd
+
+- name: Disabled autoindex.conf
+  command: mv {{ httpd_conf_d_dir }}/autoindex.conf {{ httpd_conf_d_dir }}/autoindex.conf.org
+  when: f.stat.exists
+
+- name: Status userdir.conf
+  stat:
+    path: "{{ httpd_conf_d_dir }}/userdir.conf"
+  register: f
+  notify: Restart httpd
+
+- name: Disabled userdir.conf
+  command: mv {{ httpd_conf_d_dir }}/userdir.conf {{ httpd_conf_d_dir }}/userdir.conf.org
+  when: f.stat.exists
+
+- name: Status welcome.conf
+  stat:
+    path: "{{ httpd_conf_d_dir }}/welcome.conf"
+  register: f
+
+- name: Disabled welcome.conf
+  command: mv {{ httpd_conf_d_dir }}/welcome.conf {{ httpd_conf_d_dir }}/welcome.conf.org
+  when: f.stat.exists
+  notify: Restart httpd
+
+- name: Create app.conf
+  template:
+    src: ./templates/app.conf.j2
+    dest: "{{ httpd_conf_d_dir }}/app.conf"
+    owner: root
+    group: root
+    mode: 0644
+    force: no
+  notify: Restart httpd
+
+#- name: Edit httpd.conf
+#  replace:
+#    dest: "{{ httpd_conf_dir }}/httpd.conf"
+#    regexp: "{{ item.regexp }}"
+#    replace: "{{ item.replace }}"
+#    backup: yes
+#  with_items:
+#    - regexp: '^DirectoryIndex index.html index.htm index.cgi'
+#      replace: 'DirectoryIndex index.html index.htm index.php'
+#    - regexp: '^AddType application/x-gzip .gz .tgz'
+#      replace: 'AddType application/x-gzip .gz .tgz\nAddType application/x-httpd-php .php'
+#  notify: Restart httpd
+

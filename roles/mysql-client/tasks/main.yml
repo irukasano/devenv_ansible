@@ -1,0 +1,8 @@
+---
+- name: Install mariadb clients
+  yum:
+    name: 
+      - "mariadb-client"
+    state: present
+    exclude: kernel*
+

@@ -1,0 +1,27 @@
+---
+- name: Install mariadb server
+  yum:
+    name: 
+      - "mariadb"
+      - "mariadb-server"
+    state: present
+    exclude: kernel*
+
+
+- name: Edit my.cnf
+  template:
+    src: ./templates/server.cnf.j2
+    dest: /etc/my.cnf.d/server.cnf
+    owner: root
+    group: root
+    mode: 0644
+    force: no
+  notify: Restart mariadb
+
+
+- name: Start mariadb
+  service:
+    state: started
+    name: mariadb
+    enabled: yes
+

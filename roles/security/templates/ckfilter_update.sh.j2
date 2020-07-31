@@ -1,0 +1,33 @@
+#!/bin/bash
+
+COUNTRYLIST='CN KR'
+cd /root/iptables
+wget -q -N http://ftp.apnic.net/stats/apnic/delegated-apnic-latest
+switch=0
+for country in $COUNTRYLIST
+do
+    for ip in `cat delegated-apnic-latest | grep "apnic|$country|ipv4|"`
+    do
+        COUNTRY=`echo $ip | awk -F"|" '{ print $2 }'`
+        DROP_IP=`echo $ip | awk -F"|" '{ print $4 }'`
+        TMPCIDR=`echo $ip | awk -F"|" '{ print $5 }'`
+
+        FLTCIDR=32
+        while [ $TMPCIDR -ne 1 ];
+        do
+            TMPCIDR=$((TMPCIDR/2))
+            FLTCIDR=$((FLTCIDR-1))
+        done
+        echo "$DROP_IP/$FLTCIDR" >> /root/iptables/ckip_new
+    done
+done
+
+diff /root/iptables/ckip /root/iptables/ckip_new > /dev/null 2>&1
+
+if [ $? -ne 0 ]; then
+    mv /root/iptables/ckip_new /root/iptables/ckip
+    /root/iptables/iptables_setup.sh > /dev/null
+else
+    rm -f /root/iptables/ckip_new
+fi
+

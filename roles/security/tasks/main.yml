@@ -1,0 +1,64 @@
+---
+
+- name: Mkdir iptables config
+  file:
+    path: /root/iptables
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    force: no
+
+- name: Create chkfilter script
+  template:
+    src: ./templates/ckfilter_setup.sh.j2
+    dest: /root/iptables/ckfilter_setup.sh
+    owner: root
+    group: root
+    mode: 0700
+    force: no
+
+- name: Execute chkfilter script
+  command: bash /root/iptables/ckfilter_setup.sh
+
+- name: Setup chkfilter cron.daily
+  template:
+    src: ./templates/ckfilter_update.sh.j2
+    dest: /etc/cron.daily/ckfilter_update.sh
+    owner: root
+    group: root
+    mode: 0755
+    force: no
+
+- name: Create iptables setup script
+  template:
+    src: ./templates/iptables_setup.sh.j2
+    dest: /root/iptables/iptables_setup.sh
+    owner: root
+    group: root
+    mode: 0700
+    force: no
+
+- name: Execute iptables setup script
+  command: bash /root/iptables/iptables_setup.sh
+
+- name: Whether checkrootkit.tar.gz exists
+  stat: path=/root/chkrootkit.tar.gz
+  register: f
+
+# not work
+- name: Get checkroot
+  get_url:
+    url: ftp://ftp.pangeia.com.br/pub/seg/pac/chkrootkit.tar.gz
+    dest: /root/chkrootkit.tar.gz
+    force: no
+  when: not f.stat.exists
+  notify:
+    - Unzip chkrootkit.tar.gz
+
+# - name: Get checkroot
+#   command: wget ftp://ftp.pangeia.com.br/pub/seg/pac/chkrootkit.tar.gz -O /root/chkrootkit.tar.gz
+#   when: not f.stat.exists
+#   notify:
+#     - Unzip chkrootkit.tar.gz
+

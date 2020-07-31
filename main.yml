@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+
+  vars_files:
+    - vars/main.yml
+
+  roles:
+    - setup
+#    - security
+    - mysql
+#    - mysql-client
+#    - php
+    - php56
+    - http
+    - gitclone
+
+#    - mysetting
+

@@ -1,0 +1,6 @@
+---
+
+gitclone_user: user
+gitclone_pass: pass
+gitclone_url: "http://github.com/"
+gitclone_script_dir: "/var/www/script"

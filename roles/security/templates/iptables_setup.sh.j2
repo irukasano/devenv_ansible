@@ -1,0 +1,145 @@
+#!/bin/bash
+
+################
+### 初期設定 ###
+################
+LOCALNET={{ ansible_default_ipv4.network }}/24
+
+#####################
+### IPTABLES STOP ###
+#####################
+systemctl stop iptables
+
+####################
+### Default Rule ###
+####################
+iptables -P INPUT DROP
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD DROP
+
+####################
+### LOCAL ACCEPT ###
+####################
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -s $LOCALNET -j ACCEPT
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+#####################
+### FRAGMENT DROP ###
+#####################
+iptables -A INPUT -f -j LOG --log-level debug --log-prefix 'FRAGMENT DROP:'
+iptables -A INPUT -f -j DROP
+
+####################
+### NetBIOS DROP ###
+####################
+iptables -A INPUT ! -s $LOCALNET -p tcp -m multiport --dports 135,137,138,139,445 -j DROP
+iptables -A INPUT ! -s $LOCALNET -p udp -m multiport --dports 135,137,138,139,445 -j DROP
+iptables -A OUTPUT ! -d $LOCALNET -p tcp -m multiport --sports 135,137,138,139,445 -j DROP
+iptables -A OUTPUT ! -d $LOCALNET -p udp -m multiport --sports 135,137,138,139,445 -j DROP
+
+#####################
+### PING OF DEATH ###
+#####################
+iptables -N PINGOFDEATH
+iptables -A PINGOFDEATH -m limit --limit 1/s --limit-burst 4 -j ACCEPT
+iptables -A PINGOFDEATH -j LOG --log-level debug --log-prefix 'PINGDEATH DROP:'
+iptables -A PINGOFDEATH -j DROP
+iptables -A INPUT -p icmp --icmp-type echo-request -j PINGOFDEATH
+
+########################
+### BROAD MULTI DROP ###
+########################
+iptables -A INPUT -d 255.255.255.255 -j DROP
+iptables -A INPUT -d 224.0.0.1 -j DROP
+
+################
+### 113IDENT ###
+################
+iptables -A INPUT -p tcp --dport 113 -j REJECT --reject-with tcp-reset
+
+###########
+### SSH ###
+###########
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -p tcp --dport 2222 -j ACCEPT
+
+############
+### HTTP ###
+############
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+
+###########
+### SSL ###
+###########
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+
+###########
+### FTP ###
+###########
+iptables -A INPUT -p tcp --sport 20 -j ACCEPT
+iptables -A INPUT -p tcp --dport 21 -j ACCEPT
+iptables -A INPUT -p tcp --dport 4000:4029 -j ACCEPT
+
+############
+### SMTP ###
+############
+iptables -A INPUT -p tcp --dport 25 -j ACCEPT
+
+#############
+### SMTPS ###
+#############
+iptables -A INPUT -p tcp --dport 465 -j ACCEPT
+
+############
+### POP3 ###
+############
+iptables -A INPUT -p tcp --dport 110 -j ACCEPT
+
+#############
+### POP3S ###
+#############
+iptables -A INPUT -p tcp --dport 995 -j ACCEPT
+
+############
+### IMAP ###
+############
+iptables -A INPUT -p tcp --dport 143 -j ACCEPT
+
+#############
+### IMAPS ###
+#############
+iptables -A INPUT -p tcp --dport 993 -j ACCEPT
+
+
+##################
+### PostgreSQL ###
+##################
+iptables -A INPUT -p tcp --dport 26500 -j ACCEPT
+
+################
+### CKFILTER ###
+################
+if [ -e "/root/iptables/ckip" ]; then
+    iptables -N CKFILTER
+    iptables -A CKFILTER -j DROP
+
+    for ip in `cat /root/iptables/ckip`
+    do
+        iptables -I INPUT -s $ip -j CKFILTER
+    done
+fi
+
+###############
+### logging ###
+###############
+iptables -A INPUT -m limit --limit 1/s -j LOG --log-level debug --log-prefix 'INPUT DROP:'
+iptables -A INPUT -j DROP
+iptables -A FORWARD -m limit --limit 1/s -j LOG --log-level debug --log-prefix 'FORWARD DROP:'
+iptables -A FORWARD -j DROP
+
+/usr/libexec/iptables/iptables.init save
+
+systemctl start iptables
+
+

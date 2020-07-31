@@ -1,0 +1,13 @@
+---
+
+httpd_server_ip: localhost
+httpd_server_script_dir: /var/www/script/cakeapp
+
+
+httpd_server_name: "{{ httpd_server_ip }}"
+httpd_server_webroot: "{{ httpd_server_script_dir }}/app/webroot"
+
+httpd_conf_dir: /etc/httpd/conf
+httpd_conf_d_dir: /etc/httpd/conf.d
+
+

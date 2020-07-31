@@ -1,0 +1,47 @@
+---
+- name: Restart iptables
+  service:
+    state: restarted
+    name: iptables
+    enable: yes
+
+- name: Unzip chkrootkit.tar.gz
+  command: tar xvzf /root/chkrootkit.tar.gz -C /root
+  #unarchive:
+  #  remote_src: yes
+  #  src: /root/chkrootkit.tar.gz
+  #  dest: /root
+  notify:
+    - Mkdir root bin
+
+- name: Mkdir root bin
+  file:
+    path: /root/bin
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    force: no
+  notify:
+    - Mv chkrootkit to bin
+
+- name: Mv chkrootkit to bin
+  command: mv /root/chkrootkit-0.50/chkrootkit /root/bin
+  notify: 
+    - Setup chkrootkit cron.daily
+    - Execute chkrootkit
+
+- name: Setup chkrootkit cron.daily
+  template:
+    src: ./templates/chkrootkit.j2
+    dest: /etc/cron.daily/chkrootkit
+    owner: root
+    group: root
+    mode: 0755
+    force: no
+
+- name: Execute chkrootkit
+  shell: /root/bin/chkrootkit | grep "INFECTED" | egrep -v "/sbin/init|bindshell"
+  register: chkrootkit_result
+  failed_when: chkrootkit_result.stdout_lines.count("INFECTED") > 0
+

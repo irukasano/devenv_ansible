@@ -1,0 +1,10 @@
+---
+- name: Restart yum-cron
+  service: state=restarted name=yum-cron
+
+- name: Restart ntpd
+  service: state=restarted name=ntpd.service
+
+- name: Enabled ntpd
+  service: enabled=yes name=ntpd.service
+

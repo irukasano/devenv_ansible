@@ -1,0 +1,18 @@
+NameVirtualHost *:80
+<VirtualHost *:80>
+
+    ServerAdmin     info@{{ httpd_server_name }}
+    DocumentRoot    "{{ httpd_server_webroot }}"
+    DirectoryIndex  index.php
+    ServerName      {{ httpd_server_name }}
+    ErrorLog        "/var/log/httpd/app-error.log"
+    CustomLog       "/var/log/httpd/app-access.log" combined
+    AddType application/x-httpd-php .php
+    php_value include_path ".;"
+
+    <Directory "{{ httpd_server_webroot }}">
+        AllowOverride All
+        Allow from All
+    </Directory>
+
+</VirtualHost>

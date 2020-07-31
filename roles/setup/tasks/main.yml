@@ -1,0 +1,148 @@
+---
+- name: yum up to date
+  yum:
+    name: "*"
+    state: present
+    exclude: kernel*
+
+- name: Install required packages
+  yum:
+    state: present
+    name:
+      - "bind-utils"
+      - "yum-cron"
+      - "yum-plugin-priorities"
+      - "yum-utils"
+      - "iptables-services"
+      - "ntp"
+      - "kbd"
+      - "@Base"
+      - "@Development tools"
+    exclude: kernel*
+
+- name: Disable packages
+  yum:
+    name: 
+      - "chrony"
+    state: removed
+
+- name: Edit yum-cron.conf
+  replace:
+    dest: /etc/yum/yum-cron.conf
+    regexp: '^apply_updates = no'
+    replace: 'apply_updates = yes'
+    backup: yes
+  notify:
+    - Restart yum-cron
+
+- name: check locale
+  command: /usr/bin/localectl status
+  register: localectl_result
+  check_mode: no
+  changed_when: false
+
+- name: define locale of japanese
+  command: /usr/bin/localedef -f UTF-8 -i ja_JP ja_JP
+  when: "'LANG=ja_JP.UTF-8' not in localectl_result.stdout"
+
+- name: Set locale to japanese
+  command: /usr/bin/localectl set-locale LANG=ja_JP.UTF-8
+  when: "'LANG=ja_JP.UTF-8' not in localectl_result.stdout"
+
+- name: Set keymap
+  command: /usr/bin/localectl set-keymap jp106
+  when: "'jp106' not in localectl_result.stdout"
+
+- name: Set timezone to tokyo
+  timezone: 
+    name: Asia/Tokyo
+
+- name: check timedatectl
+  command: /usr/bin/timedatectl status
+  register: timedatectl_result
+  check_mode: no
+  changed_when: false
+
+- name: Set local rtc 0
+  command: /usr/bin/timedatectl set-local-rtc 0
+  when: "'Warning' in timedatectl_result.stdout"
+
+
+#- name: Edit CentOS-Base.repo
+#  template:
+#    src: ./templates/CentOS-Base.repo.j2
+#    dest: /etc/yum.repos.d/CentOS-Base.repo
+#    owner: root
+#    group: root
+#    mode: 0644
+#    force: no
+
+#- name: Add repositories
+#  yum_repository:
+#    name: "{{ item.name }}"
+#    description: "{{ item.name }} repo"
+#    baseurl: "{{ item.url }}"
+#    #mirrorlist: http://mirrorlist.repoforge.org/el7/mirrors-rpmforge
+#    enabled: no
+#  with_items:
+#    - url: http://apt.sw.be/redhat/el7/en/x86_64/rpmforge
+#      name: rpmforge
+#    - url: http://download.fedoraproject.org/pub/epel/7/x86_64/
+#      name: epel
+#    - url: http://www.elrepo.org/
+#      name: elrepo
+#    - url: http://rpms.famillecollet.com/enterprise/
+#      name: remi
+
+# - name: import repositories key
+#   rpm_key:
+#     state: present
+#     key: "{{ item }}"
+#   with_items:
+#     # - ftp://ftp.riken.jp/Linux/dag/RPM-GPG-KEY.dag.txt
+#     - http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+#     - http://elrepo.org/RPM-GPG-KEY-elrepo.org
+#     - http://rpms.famillecollet.com/RPM-GPG-KEY-remi
+
+# - name: add repositories
+#   yum:
+#     name: "{{ item }}"
+#     state: present
+#   with_items:
+#     # - ftp://ftp.riken.jp/Linux/dag/redhat/el7/en/x86_64/rpmforge/RPMS/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
+#     - http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+#     - http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+#     - http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+
+# - name: Update repositories
+#   yum:
+#     name: "{{ item }}"
+#     state: latest
+#   with_items:
+#     #- rpmforge-release
+#     - epel-release
+#     - elrepo-release
+#     - remi-release
+
+- name: Whether ntpd.conf backup exists
+  find: 
+    paths: "/etc"
+    patterns: "ntp.conf.*"
+  register: f
+
+#- debug: var=f
+#  when: f.files|length == 0
+
+- name: Backup and edit ntpd.conf
+  template:
+    src: ./templates/ntp.conf.j2
+    dest: /etc/ntp.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  when: f.files|length == 0
+  notify:
+    - Enabled ntpd
+    - Restart ntpd
+
