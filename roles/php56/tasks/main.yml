@@ -1,9 +1,13 @@
 ---
-- name: Whether already installed php
-  command: yum list | grep php-devel
+- name: whether already installed php
+  command: yum list php-devel
   register: php_result
-  check_mode: no
+  #check_mode: no
   changed_when: false
+  args:
+    warn: no
+
+- debug: var=php_result
 
 - name: remove installed php
   yum:
@@ -27,16 +31,24 @@
   check_mode: no
   changed_when: false
 
+- debug: var=yum_result
+
 - name: install epel-release
   yum:
     name: epel-release
     state: present
   when: "'enabled = True' not in yum_result.stdout"
 
-- name: install remi
+- name: download remi
   get_url:
     url: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
-    dest: /etc/yum.repos.d
+    dest: /tmp/
+  when: "'enabled = True' not in yum_result.stdout"
+
+- name: install remi
+  yum:
+    name: /tmp/remi-release-7.rpm
+    state: present
   when: "'enabled = True' not in yum_result.stdout"
 
 - name: enable remi-php56

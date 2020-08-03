@@ -8,6 +8,6 @@ httpd_server_webroot: "{{ httpd_server_script_dir }}/app/webroot"
 
 gitclone_user: 
 gitclone_pass: 
-gitclone_url: "https://{{ gitclone_user }}:{{ gitclone_password }}@github.com/sample.git"
+gitclone_url: "https://{{ gitclone_user }}:{{ gitclone_pass }}@github.com/sample.git"
 gitclone_script_dir: "{{ httpd_server_script_dir }}"
 

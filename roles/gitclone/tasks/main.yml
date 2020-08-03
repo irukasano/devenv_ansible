@@ -1,7 +1,7 @@
 ---
 - name: Mkdir script directory
   file:
-    path: {{ gitclone_script_dir }}
+    path: "{{ gitclone_script_dir }}"
     state: directory
     owner: vagrant
     group: vagrant
@@ -11,9 +11,10 @@
 
 - name: Git clone from repo
   git:
-    repo: {{ gitclone_url }}
-    dest: {{ gitclone_script_dir }}
-    force: yes
+    repo: "{{ gitclone_url }}"
+    dest: "{{ gitclone_script_dir }}"
+    force: no
+    accept_hostkey: yes
 
 - name: Chmod tmp directory
   file:
@@ -23,7 +24,7 @@
     recurse: yes
   become: yes
   with_items:
-    - {{ gitclone_script_dir }}/app/tmp
-    - {{ gitclone_script_dir }}/app_pointsv/tmp
-    - {{ gitclone_script_dir }}/app_gigyosya/tmp
-    - {{ gitclone_script_dir }}/files
+    - "{{ gitclone_script_dir }}/app/tmp"
+    - "{{ gitclone_script_dir }}/app_pointsv/tmp"
+    - "{{ gitclone_script_dir }}/app_gigyosya/tmp"
+    - "{{ gitclone_script_dir }}/files"
