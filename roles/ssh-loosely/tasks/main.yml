@@ -1,0 +1,16 @@
+---
+- name: add user ( admin )
+  user:
+    name: "{{ ssh_loosely_username }}"
+    password: "{{ ssh_loosely_userpass | password_hash('sha512') }}"
+
+- name: edit sshd_config
+  replace:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+    backup: yes
+  with_items:
+    - regexp: '^PasswordAuthentication no'
+      replace: 'PasswordAuthentication yes'
+  notify: Restart sshd

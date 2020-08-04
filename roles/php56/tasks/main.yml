@@ -7,7 +7,7 @@
   args:
     warn: no
 
-- debug: var=php_result
+#- debug: var=php_result
 
 - name: remove installed php
   yum:
@@ -31,7 +31,7 @@
   check_mode: no
   changed_when: false
 
-- debug: var=yum_result
+#- debug: var=yum_result
 
 - name: install epel-release
   yum:

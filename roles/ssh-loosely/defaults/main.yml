@@ -1,0 +1,4 @@
+---
+
+ssh_loosely_username: admin
+ssh_loosely_userpass: vagrant
