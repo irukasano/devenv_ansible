@@ -1,4 +1,14 @@
 ---
+- name: disable selinux
+  selinux:
+    state: disabled
+
+- name: disable firewalld
+  service:
+    state: stopped
+    name: firewall
+    enabled: no
+
 - name: add user ( admin )
   user:
     name: "{{ ssh_loosely_username }}"
@@ -14,3 +24,4 @@
     - regexp: '^PasswordAuthentication no'
       replace: 'PasswordAuthentication yes'
   notify: Restart sshd
+
