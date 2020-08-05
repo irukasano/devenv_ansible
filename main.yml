@@ -13,5 +13,6 @@
     - php56
     - http
     - ssh-loosely
+    - additionals-fordev
 #    - gitclone
 

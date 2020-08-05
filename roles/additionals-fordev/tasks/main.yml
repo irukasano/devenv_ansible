@@ -1,0 +1,48 @@
+---
+- name: Install additional packages
+  yum:
+    state: present
+    name:
+      - "lynx"
+    exclude: kernel*
+
+- name: Install additional packages ( epel )
+  yum:
+    state: present
+    name:
+      - "pandoc"
+      - "source-highlight"
+    enablerepo: epel
+    exclude: kernel*
+
+- name: whether exists shells:fish.repo
+  command: yum-config-manager  shells:fish | grep enable
+  register: yum_result
+  check_mode: no
+  changed_when: false
+
+#- debug: var=yum_result
+
+- name: download shells:fish.repo
+  get_url:
+    url: https://download.opensuse.org/repositories/shells:fish:release:3/CentOS_8/shells:fish:release:3.repo
+    dest: /tmp/
+  when: "'enabled = True' not in yum_result.stdout"
+
+- name: install shells:fish.repo
+  copy:
+    src: /tmp/shells:fish:release:3.repo
+    dest: /etc/yum.repos.d/shells:fish:release:3.repo
+  when: "'enabled = True' not in yum_result.stdout"
+
+#- name: enable remi-php56
+#  command: yum-config-manager --enable shells:fish:release:3
+#  when: "'enabled = True' not in yum_result.stdout"
+
+- name: Install fish 
+  yum:
+    state: present
+    name:
+      - "fish"
+    exclude: kernel*
+
