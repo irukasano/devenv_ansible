@@ -12,6 +12,7 @@
 #    - php
     - php56
     - http
+    - samba
     - ssh-loosely
     - additionals-fordev
 #    - gitclone

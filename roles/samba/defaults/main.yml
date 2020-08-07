@@ -1,0 +1,7 @@
+---
+smb_workgroup: WORKGROUP
+smb_hosts_allow: 192.168.0.0/16 10.0.2.0/24
+smb_create_mask: 644
+smb_guest_user: vagrant
+smb_share_directory: /var/www
+

@@ -4,6 +4,8 @@
     state: present
     name:
       - "lynx"
+      - "python3"
+      - "gitflow"
     exclude: kernel*
 
 - name: Install additional packages ( epel )
@@ -25,14 +27,14 @@
 
 - name: download shells:fish.repo
   get_url:
-    url: https://download.opensuse.org/repositories/shells:fish:release:3/CentOS_8/shells:fish:release:3.repo
+    url: https://download.opensuse.org/repositories/shells:fish/RHEL_7/shells:fish.repo
     dest: /tmp/
   when: "'enabled = True' not in yum_result.stdout"
 
 - name: install shells:fish.repo
   copy:
-    src: /tmp/shells:fish:release:3.repo
-    dest: /etc/yum.repos.d/shells:fish:release:3.repo
+    src: /tmp/shells:fish.repo
+    dest: /etc/yum.repos.d/shells:fish.repo
   when: "'enabled = True' not in yum_result.stdout"
 
 #- name: enable remi-php56

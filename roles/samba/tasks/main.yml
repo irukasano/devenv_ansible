@@ -1,0 +1,32 @@
+---
+- name: Install samba
+  yum:
+    state: present
+    name:
+      - "samba"
+    exclude: kernel*
+
+- name: Edit smb.conf
+  template:
+    src: ./templates/smb.conf.j2
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+    backup: yes
+  notify: 
+    - Restart smb
+    - Restart nmb
+
+- name: Start smb
+  service:
+    state: started
+    name: smb
+    enabled: yes
+
+- name: Start nmb
+  service:
+    state: started
+    name: nmb
+    enabled: yes

@@ -6,8 +6,14 @@ httpd_server_script_dir:
 httpd_server_name: "{{ httpd_server_ip }}"
 httpd_server_webroot: "{{ httpd_server_script_dir }}/app/webroot"
 
-gitclone_user: 
-gitclone_pass: 
-gitclone_url: "https://{{ gitclone_user }}:{{ gitclone_pass }}@github.com/sample.git"
-gitclone_script_dir: "{{ httpd_server_script_dir }}"
+#gitclone_user: 
+#gitclone_pass: 
+#gitclone_url: "https://{{ gitclone_user }}:{{ gitclone_pass }}@github.com/sample.git"
+#gitclone_script_dir: "{{ httpd_server_script_dir }}"
+
+smb_workgroup: WORKGROUP
+smb_hosts_allow: 192.168.0.0/16 10.0.2.0/24
+smb_create_mask: 644
+smb_guest_user: vagrant
+smb_share_directory: /var/www
 
