@@ -17,3 +17,4 @@ smb_create_mask: 644
 smb_guest_user: vagrant
 smb_share_directory: /var/www
 
+mail_notsend_redirect_to: test@example.com

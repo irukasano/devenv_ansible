@@ -24,13 +24,24 @@
     name: firewalld
     enabled: no
 
-- name: add user ( admin )
+- name: "add user ( {{ ssh_loosely_username }} )"
   user:
     name: "{{ ssh_loosely_username }}"
     password: "{{ ssh_loosely_userpass | password_hash('sha512') }}"
+    update_password: on_create
 
-#- name: add user can sudo
+- name: add user can sudo
+  lineinfile:
+    path: "/etc/sudoers.d/{{ ssh_loosely_username }}"
+    line: "{{ ssh_loosely_username }}   ALL=(ALL)   NOPASSWD: ALL"
+    create: yes
+    state: present
 
+- name: add LANG for {{ ssh_loosely_username }}
+  lineinfile:
+    path: "/home/{{ ssh_loosely_username }}/.bash_profile"
+    line: "export LANG=ja_JP.utf8"
+    state: present
 
 - name: edit sshd_config
   replace:

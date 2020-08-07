@@ -53,6 +53,12 @@
   command: /usr/bin/localectl set-keymap jp106
   when: "'jp106' not in localectl_result.stdout"
 
+- name: add LANG for vagrant
+  lineinfile:
+    path: "/home/vagrant/.bash_profile"
+    line: "export LANG=ja_JP.utf8"
+    state: present
+
 - name: Set timezone to tokyo
   timezone: 
     name: Asia/Tokyo

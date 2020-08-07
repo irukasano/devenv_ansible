@@ -1,0 +1,18 @@
+- name: "Enable header_checkes"
+  replace:
+    dest: /etc/postfix/main.cf
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+    backup: yes
+  with_items:
+    - regexp: '^#header_checks'
+      replace: 'header_checks'
+  notify: Restart postfix
+
+- name: "All mail redirect to {{ mail_notsend_redirect_to }}"
+  lineinfile:
+    path: "/etc/postfix/header_checks"
+    line: "/^To:.*/ REDIRECT {{ mail_notsend_redirect_to }}"
+    state: present
+  notify: Restart postfix
+  
