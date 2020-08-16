@@ -13,8 +13,8 @@
 #    - php56
     - php74
     - http
-    - samba
     - ssh-loosely
+    - samba
     - mail-notsend
     - additionals-fordev
 #    - gitclone
