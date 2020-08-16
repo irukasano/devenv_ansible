@@ -25,6 +25,4 @@
   become: yes
   with_items:
     - "{{ gitclone_script_dir }}/app/tmp"
-    - "{{ gitclone_script_dir }}/app_pointsv/tmp"
-    - "{{ gitclone_script_dir }}/app_gigyosya/tmp"
     - "{{ gitclone_script_dir }}/files"
