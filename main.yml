@@ -10,7 +10,8 @@
     - mysql
 #    - mysql-client
 #    - php
-    - php56
+#    - php56
+    - php74
     - http
     - samba
     - ssh-loosely
