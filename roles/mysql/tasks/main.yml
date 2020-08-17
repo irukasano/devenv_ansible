@@ -15,7 +15,8 @@
     owner: root
     group: root
     mode: 0644
-    force: no
+    force: yes
+    backup: yes
   notify: Restart mariadb
 
 
