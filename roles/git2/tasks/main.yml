@@ -1,0 +1,55 @@
+---
+- name: whether already installed git2
+  command: yum list git
+  register: git_result
+  #check_mode: no
+  changed_when: false
+  args:
+    warn: no
+
+- name: remove installed git
+  yum:
+    state: removed
+    name: 
+      - "git"
+  when: "' 2.' not in git_result.stdout"
+
+- name: whether exists ius
+  command: yum-config-manager ius | grep enable
+  register: yum_result
+  check_mode: no
+  changed_when: false
+
+- name: download ius
+  get_url:
+    url: https://repo.ius.io/ius-release-el7.rpm
+    dest: /tmp/
+  when: "'enabled = ' not in yum_result.stdout"
+
+- name: install ius
+  yum:
+    name: /tmp/ius-release-el7.rpm
+    state: present
+  when: "'enabled = ' not in yum_result.stdout"
+
+- name: enable ius
+  command: yum-config-manager --enable ius
+  when: "'enabled = True' not in yum_result.stdout"
+
+- name: Install and git2
+  yum:
+    state: present
+    name:
+      - "git224"
+    exclude: 
+      - "kernel*"
+
+- name: whether enabled ius
+  command: yum-config-manager ius | grep enable
+  register: yum_result
+  check_mode: no
+  changed_when: false
+
+- name: disable ius
+  command: yum-config-manager --disable ius
+  when: "'enabled = True' in yum_result.stdout"

@@ -6,12 +6,13 @@
 
   roles:
     - setup
+    - git2
 #    - security
     - mysql
 #    - mysql-client
 #    - php
-#    - php56
-    - php74
+    - php56
+#    - php74
     - http
     - ssh-loosely
     - samba
