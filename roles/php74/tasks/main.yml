@@ -1,0 +1,112 @@
+---
+- name: whether already installed php
+  command: yum list php-devel
+  register: php_result
+  #check_mode: no
+  changed_when: false
+  args:
+    warn: no
+
+#- debug: var=php_result
+
+- name: remove installed php
+  yum:
+    state: removed
+    name: 
+      - "php"
+      - "php-common"
+      - "php-devel"
+      - "php-mbstring"
+      - "php-mcrypt"
+      - "php-gd"
+      - "php-mysqlnd"
+      - "php-pdo"
+  notify:
+    - Restart httpd
+  when: "'7.4' not in php_result.stdout"
+
+- name: whether exists remi74
+  command: yum-config-manager  remi-php74 | grep enable
+  register: yum_result
+  check_mode: no
+  changed_when: false
+
+#- debug: var=yum_result
+
+- name: install epel-release
+  yum:
+    name: epel-release
+    state: present
+  when: "'enabled = True' not in yum_result.stdout"
+
+- name: download remi
+  get_url:
+    url: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+    dest: /tmp/
+  when: "'enabled = True' not in yum_result.stdout"
+
+- name: install remi
+  yum:
+    name: /tmp/remi-release-7.rpm
+    state: present
+  when: "'enabled = True' not in yum_result.stdout"
+
+- name: enable remi-php74
+  command: yum-config-manager --enable remi-php74
+  when: "'enabled = True' not in yum_result.stdout"
+
+- name: Install and php74
+  yum:
+    state: present
+    name:
+      - "php"
+      - "php-common"
+      - "php-devel"
+      - "php-mbstring"
+      - "php-mcrypt"
+      - "php-gd"
+      - "php-mysqlnd"
+      - "php-pdo"
+    exclude: 
+      - "kernel*"
+  notify:
+    - Restart httpd
+
+- name: Edit php.ini
+  replace:
+    dest: "/etc/php.ini"
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+    backup: yes
+  with_items:
+    - regexp: '^expose_php = On'
+      replace: 'expose_php = Off'
+    - regexp: '^max_execution_time = 30$'
+      replace: 'max_execution_time = 300'
+    - regexp: '^error_reporting  =  E_ALL'
+      replace: 'error_reporting  =  E_ALL & ~E_NOTICE'
+    - regexp: '^post_max_size = 8M'
+      replace: 'post_max_size = 20M'
+    - regexp: '^;default_charset = "UTF-8"'
+      replace: 'default_charset = "UTF-8"'
+    - regexp: '^upload_max_filesize = 2M'
+      replace: 'upload_max_filesize = 20M'
+    - regexp: '^;date.timezone ='
+      replace: 'date.timezone = Asia/Tokyo'
+    - regexp: '^;mbstring.language = Japanese'
+      replace: 'mbstring.language = Japanese'
+    - regexp: '^;mbstring.internal_encoding = EUC-JP'
+      replace: 'mbstring.internal_encoding = UTF-8'
+    - regexp: '^;mbstring.http_input = UTF-8'
+      replace: 'mbstring.http_input = UTF-8'
+    - regexp: '^;mbstring.http_output = SJIS'
+      replace: 'mbstring.http_output = pass'
+    - regexp: '^;mbstring.encoding_translation = Off'
+      replace: 'mbstring.encoding_translation = On'
+    - regexp: '^;mbstring.detect_order = auto'
+      replace: 'mbstring.detect_order = auto'
+    - regexp: '^;mbstring.substitute_character = none;'
+      replace: 'mbstring.substitute_character = none;'
+  notify: Restart httpd
+
+
