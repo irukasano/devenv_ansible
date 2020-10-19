@@ -1,7 +1,7 @@
 ---
 - name: hostname
   hostname:
-    name: {{ setup_hostname }}
+    name: "{{ setup_hostname }}"
 
 - name: yum up to date
   yum:

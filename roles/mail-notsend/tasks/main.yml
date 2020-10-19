@@ -12,7 +12,7 @@
 - name: "All mail redirect to {{ mail_notsend_redirect_to }}"
   lineinfile:
     path: "/etc/postfix/header_checks"
-    line: {{ item }}
+    line: "{{ item }}"
     state: present
   with_items:
     - "/^To:{{ mail_notsend_redirect_to }}/ OK"
