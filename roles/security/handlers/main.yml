@@ -26,7 +26,7 @@
     - Mv chkrootkit to bin
 
 - name: Mv chkrootkit to bin
-  command: mv /root/chkrootkit-0.50/chkrootkit /root/bin
+  command: mv /root/chkrootkit-0.54/chkrootkit /root/bin
   notify: 
     - Setup chkrootkit cron.daily
     - Execute chkrootkit

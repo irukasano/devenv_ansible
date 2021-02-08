@@ -1,2 +1,6 @@
 ---
+environment: dev
+
 setup_hostname: centos7.localdomain
+setup_username: vagrant
+

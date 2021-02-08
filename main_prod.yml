@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+
+  vars_files:
+    - vars/main.yml
+
+  roles:
+    - setup
+    - git2
+    - security
+#    - mysql
+#    - mysql-client
+#    - php
+#    - php56
+    - php74
+#    - http
+#    - ssh-loosely
+#    - samba
+#    - mail-notsend
+#    - additionals-fordev
+#    - gitclone
+

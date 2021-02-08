@@ -26,6 +26,7 @@ diff /root/iptables/ckip /root/iptables/ckip_new > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
     mv /root/iptables/ckip_new /root/iptables/ckip
+    cat /root/iptables/myckip >> /root/iptables/ckip
     /root/iptables/iptables_setup.sh > /dev/null
 else
     rm -f /root/iptables/ckip_new

@@ -1,4 +1,7 @@
 ---
+# environment = dev/prod
+environment: dev
+setup_hostname: centos7.localdomain
 
 httpd_server_ip: 
 httpd_server_script_dir: 

@@ -2,6 +2,7 @@
 - name: hostname
   hostname:
     name: "{{ setup_hostname }}"
+  when: environment == "dev"
 
 - name: yum up to date
   yum:
@@ -33,9 +34,14 @@
 - name: Edit yum-cron.conf
   replace:
     dest: /etc/yum/yum-cron.conf
-    regexp: '^apply_updates = no'
-    replace: 'apply_updates = yes'
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
     backup: yes
+  with_items:
+    - regexp: '^apply_updates = no'
+      replace: 'apply_updates = yes'
+    - regexp: '^update_cmd = default'
+      replace: 'update_cmd = security'
   notify:
     - Restart yum-cron
 
@@ -59,7 +65,7 @@
 
 - name: add LANG for vagrant
   lineinfile:
-    path: "/home/vagrant/.bash_profile"
+    path: "/home/{{ setup_username }}/.bash_profile"
     line: "export LANG=ja_JP.utf8"
     state: present
 
