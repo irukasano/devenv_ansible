@@ -28,8 +28,11 @@ wsl$ ssh root@{serveripv4}
 ### 管理者ユーザーを追加
 
 [root@{servername} ~]# useradd {username}
+
 [root@{servername} ~]# passwd {username}
+
 [root@{servername} ~]# usermod -G wheel {username}
+
 [root@{servername} ~]# vi /etc/pam.d/su
 
     #auth       required     pam_wheel.so use_uid
@@ -40,6 +43,7 @@ wsl$ ssh root@{serveripv4}
 ### 鍵認証ログインするので、クライアントで鍵作成し転送する
 
 wsl$ cd ~/.ssh/idfiles
+
 wsl$ ssk-keygen -t rsa -b 4096 -f {servername}.id_rsa
 
 wsl$ ssh-copy-id -i ~/.ssh/idfiles/{servername}.id_rsa.pub {username}@{serveripv4}
@@ -92,16 +96,23 @@ wsl$ ssh -i ~/.ssh/idfiles/{servername}.id_rsa {username}@{serveripv4}
 < パスワードログインできないことを確認 >
 
 [{username}@{servername} ~]$ exit
+
 wsl$ ssh {username}@{serveripv4} -p 29992
+
 {username}@{serveripv4}: Permission denied (publickey).  ← こう表示されればパスワードログイン不可
 
 ### 各種設定
 
 [{username}@{servername} ~]$ su -
+
 [root@{servername} ~]$ wget https://github.com/irukasano/devenv_ansible.git
+
 [root@{servername} ~]$ yum -y install ansible --exclude=kernel
+
 [root@{servername} ~]$ cd /root/devenv_ansible
+
 [root@{servername} ~]$ cp -p ./vars/main_prod.yml.sample ./vars/main.yml
+
 [root@{servername} ~]$ ansible-playbook main_prod.yml
 
 
