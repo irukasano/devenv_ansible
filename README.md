@@ -105,7 +105,7 @@ wsl$ ssh {username}@{serveripv4} -p 29992
 
 [{username}@{servername} ~]$ su -
 
-[root@{servername} ~]$ wget https://github.com/irukasano/devenv_ansible.git
+[root@{servername} ~]$ git clone https://github.com/irukasano/devenv_ansible.git
 
 [root@{servername} ~]$ yum -y install ansible --exclude=kernel
 
