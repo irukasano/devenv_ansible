@@ -26,17 +26,17 @@
 
 #- debug: var=yum_result
 
-- name: download shells:fish.repo
-  get_url:
-    url: https://download.opensuse.org/repositories/shells:fish/RHEL_7/shells:fish.repo
-    dest: /tmp/
-  when: "'enabled = True' not in yum_result.stdout"
-
-- name: install shells:fish.repo
-  copy:
-    src: /tmp/shells:fish.repo
-    dest: /etc/yum.repos.d/shells:fish.repo
-  when: "'enabled = True' not in yum_result.stdout"
+#- name: download shells:fish.repo
+#  get_url:
+#    url: https://download.opensuse.org/repositories/shells:fish/RHEL_7/shells:fish.repo
+#    dest: /tmp/
+#  when: "'enabled = True' not in yum_result.stdout"
+#
+#- name: install shells:fish.repo
+#  copy:
+#    src: /tmp/shells:fish.repo
+#    dest: /etc/yum.repos.d/shells:fish.repo
+#  when: "'enabled = True' not in yum_result.stdout"
 
 #- name: enable remi-php56
 #  command: yum-config-manager --enable shells:fish:release:3
