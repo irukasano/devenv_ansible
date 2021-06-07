@@ -21,6 +21,7 @@
       - "php-gd"
       - "php-mysqlnd"
       - "php-pdo"
+      - "php-intl"
   notify:
     - Restart httpd
   when: "'7.4' not in php_result.stdout"
