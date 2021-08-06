@@ -69,6 +69,9 @@
       - "php-gd"
       - "php-mysqlnd"
       - "php-pdo"
+      - "php-dom"
+      - "php-xml"
+      - "php-zip"
     exclude: 
       - "kernel*"
   notify:
