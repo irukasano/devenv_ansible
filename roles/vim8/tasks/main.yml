@@ -11,7 +11,6 @@
 - name: clone vim8.
   git: repo=git://github.com/vim/vim.git
         dest=/tmp/vim
-        version=v8.1.0037
 
 - name: make vim8.
   shell: "{{ item }}"
