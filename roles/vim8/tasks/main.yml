@@ -1,0 +1,26 @@
+- name: yum install.
+  yum:
+    state: latest
+    name:
+      - lua-devel
+      - python-devel
+      - ruby-devel
+      - ncurses-devel
+    exclude: kernel*
+
+- name: clone vim8.
+  git: repo=git://github.com/vim/vim.git
+        dest=/tmp/vim
+        version=v8.1.0037
+
+- name: make vim8.
+  shell: "{{ item }}"
+  args:
+    chdir: /tmp/vim/src
+  with_items:
+    #  --prefix=/usr/local
+    - ./configure --with-features=huge --enable-multibyte --enable-luainterp=dynamic --enable-gpm --enable-cscope --enable-fontset --enable-fail-if-missing --enable-pythoninterp=dynamic --enable-rubyinterp=dynamic
+    - make
+    - make install
+  become: yes
+

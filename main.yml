@@ -11,12 +11,13 @@
     - mysql
 #    - mysql-client
 #    - php
-    - php56
-#    - php74
+#    - php56
+    - php74
     - http
     - ssh-loosely
     - samba
     - mail-notsend
     - additionals-fordev
+    - vim8
 #    - gitclone
 

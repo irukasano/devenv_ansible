@@ -55,7 +55,7 @@
     owner: root
     group: root
     mode: 0644
-    force: no
+    force: yes
   notify: Restart httpd
 
 #- name: Edit httpd.conf
