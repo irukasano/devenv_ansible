@@ -28,7 +28,7 @@
 
 - name: download shells:fish.repo
   get_url:
-    url: https://download.opensuse.org/repositories/shells:fish/RHEL_7/shells:fish.repo
+    url: https://download.opensuse.org/repositories/shells:fish:release:3/CentOS_7/shells:fish:release:3.repo
     dest: /tmp/
   when: "'enabled = True' not in yum_result.stdout"
 
