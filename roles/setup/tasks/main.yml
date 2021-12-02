@@ -7,7 +7,7 @@
 - name: yum up to date
   yum:
     name: "*"
-    state: present
+    state: latest
 #    exclude: kernel*
 
 - name: Install required packages

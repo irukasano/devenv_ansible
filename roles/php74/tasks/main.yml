@@ -21,6 +21,8 @@
       - "php-gd"
       - "php-mysqlnd"
       - "php-pdo"
+      - "php-intl"
+      - "php-xml"
   notify:
     - Restart httpd
   when: "'7.4' not in php_result.stdout"
@@ -67,6 +69,9 @@
       - "php-gd"
       - "php-mysqlnd"
       - "php-pdo"
+      - "php-dom"
+      - "php-xml"
+      - "php-zip"
     exclude: 
       - "kernel*"
   notify:
